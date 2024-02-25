@@ -1,0 +1,10 @@
+﻿DawnCache/
+GPUCache/
+.vs/
+x64/Debug/CEF.tlog/
+x64/Debug/locales/
+*.vcxproj
+*.sln
+*.manifest
+*.vcxproj.filters
+*.vcxproj.user
