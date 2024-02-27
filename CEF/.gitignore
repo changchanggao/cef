@@ -3,6 +3,14 @@ GPUCache/
 .vs/
 x64/Debug/CEF.tlog/
 x64/Debug/locales/
+x64/Debug/*.obj
+x64/Debug/*.log
+x64/Debug/*.pdb
+x64/Debug/*.ilk
+x64/Debug/*.txt
+x64/Debug/*.idb
+x64/Debug/*.exe
+x64/Debug/*.recipe
 *.vcxproj
 *.sln
 *.manifest
