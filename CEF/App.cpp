@@ -6,12 +6,16 @@
 #include "include/wrapper/cef_helpers.h"
 #include "WindowDelegate.h"
 #include "HttpSchemeFactory.h"
+#include "ViewDelegate.h"
+#include "PageHandler.h"
 //CEF主进程上下文环境初始化成功
 void App::OnContextInitialized() {
     CEF_REQUIRE_UI_THREAD();
     CefRegisterSchemeHandlerFactory("https", "liulun", new HttpSchemeFactory());
     std::string url = "https://liulun/index.html?a=123";
     CefBrowserSettings settings;
-    CefRefPtr<CefBrowserView> browser_view = CefBrowserView::CreateBrowserView(nullptr, url, settings, nullptr, nullptr, nullptr);
+    CefRefPtr<PageHandler> pageHandler(new PageHandler());
+    CefRefPtr<ViewDelegate> viewDelegate(new ViewDelegate());
+    CefRefPtr<CefBrowserView> browser_view = CefBrowserView::CreateBrowserView(pageHandler, url, settings, nullptr, nullptr, viewDelegate);
     CefWindow::CreateTopLevelWindow(new WindowDelegate(browser_view));
 }
