@@ -11,6 +11,7 @@ x64/Debug/*.txt
 x64/Debug/*.idb
 x64/Debug/*.exe
 x64/Debug/*.recipe
+x64/Debug/html
 *.vcxproj
 *.sln
 *.manifest
