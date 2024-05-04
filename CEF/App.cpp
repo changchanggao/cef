@@ -17,5 +17,5 @@ void App::OnContextInitialized() {
     CefRefPtr<PageHandler> pageHandler(new PageHandler());
     CefRefPtr<ViewDelegate> viewDelegate(new ViewDelegate());
     CefRefPtr<CefBrowserView> browser_view = CefBrowserView::CreateBrowserView(pageHandler, url, settings, nullptr, nullptr, viewDelegate);
-    CefWindow::CreateTopLevelWindow(new WindowDelegate(browser_view));
+    CefWindow::CreateTopLevelWindow(new WindowDelegate(browser_view, false));
 }

@@ -35,3 +35,8 @@ bool WindowDelegate::CanClose(CefRefPtr<CefWindow> window)
     }
     return result;
 }
+
+bool WindowDelegate::IsFrameless(CefRefPtr<CefWindow> window)
+{
+    return !is_dev_;
+}

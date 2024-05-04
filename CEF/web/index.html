@@ -1,12 +1,87 @@
 ﻿<html>
-  <head>
-    <title>第一个本地页面</title>
-    <meta charset="utf-8" />
-  </head>
-  <body>
-      这是第一个本地页面<br />
-      <a href="https://liulun/index.html?a=123" target="_blank">打开一个新窗口</a>
-      它的地址是：
-      <script src="/a.js"></script>
-  </body>
+<head>
+    <title>第一个本地页面</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" type="text/css" href="icon/iconfont.css" />
+    <style>
+        html, body {
+            margin: 0px;
+            padding: 0px;
+            height: 100%;
+            width: 100%;
+        }
+
+        body {
+            user-select: none;
+            font-size: 13px;
+            color: #333;
+            font-family: -apple-system, 'Microsoft Yahei', Ubuntu, sans-serif;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .titleBar {
+            height: 38px;
+            background: #ffd6e7;
+            line-height: 38px;
+            padding-left: 16px;
+            display: flex;
+        }
+
+        .titleContent {
+            flex: 1;
+            -webkit-app-region: drag;
+        }
+
+        .toolBox {
+            width: 180px;
+            display: flex;
+        }
+
+            .toolBox div {
+                flex: 1;
+                text-align: center;
+            }
+
+                .toolBox div:hover {
+                    background: #ffadd2;
+                }
+
+                .toolBox div:last-child:hover {
+                    background: #ff7875;
+                    color: #fff;
+                }
+
+                .toolBox div i {
+                    font-size: 12px;
+                }
+
+        .content {
+            flex: 1;
+            text-align: center;
+            padding-top: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div class="titleBar">
+        <div class="titleContent">这是我的第一个窗口</div>
+        <div class="toolBox">
+            <div> <i class="icon icon-setting"></i> </div>
+            <div id="minimizeBtn"> <i class="icon icon-minimize"></i> </div>
+            <div id="maximizeBtn"> <i class="icon icon-maximize"></i> </div>
+            <div id="closeBtn"> <i class="icon icon-close"></i> </div>
+        </div>
+    </div>
+    <div class="content">
+        这是窗口的内容区域<br />
+        <a href="my://liulun/index.html?a=123" target="_blank">打开一个新窗口</a>
+    </div>
+    <script language="javascript">
+        let minimizeBtn = document.querySelector("#minimizeBtn");
+        minimizeBtn.addEventListener("click", () => {
+
+        })
+    </script>
+</body>
 </html>

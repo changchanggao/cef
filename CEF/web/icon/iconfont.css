@@ -1,0 +1,32 @@
+@font-face {
+    font-family: "iconfont";
+    src: url('iconfont.ttf') format('truetype');
+}
+
+.icon {
+    font-family: "iconfont" !important;
+    font-size: 16px;
+    font-style: normal;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-setting:before {
+    content: "\e72d";
+}
+
+.icon-close:before {
+    content: "\e6e7";
+}
+
+.icon-minimize:before {
+    content: "\e6e8";
+}
+
+.icon-restore:before {
+    content: "\e6e9";
+}
+
+.icon-maximize:before {
+    content: "\e6e5";
+}

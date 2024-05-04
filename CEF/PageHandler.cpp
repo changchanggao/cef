@@ -1,5 +1,7 @@
-#include "PageHandler.h"
+﻿#include "PageHandler.h"
 #include "include/wrapper/cef_helpers.h"
+#include "include/views/cef_browser_view.h"
+#include "include/views/cef_window.h"
 //页面创建成功
 void PageHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 	CEF_REQUIRE_UI_THREAD();
@@ -68,4 +70,16 @@ bool PageHandler::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<
 	}
 	}
 	return true;
+}
+
+void PageHandler::OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const std::vector<CefDraggableRegion>& regions)
+{
+	CefRefPtr<CefBrowserView> browser_view = CefBrowserView::GetForBrowser(browser);
+	if (browser_view)
+	{
+		CefRefPtr<CefWindow> window = browser_view->GetWindow();
+		if (window) {
+			window->SetDraggableRegions(regions);
+		}
+	}
 }
