@@ -2,6 +2,18 @@
 #include "include/wrapper/cef_helpers.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
+
+std::vector<std::string> split(const std::string& s, char delim) {
+	std::vector<std::string> elems;
+	std::istringstream iss(s);
+	std::string item;
+	while (std::getline(iss, item, delim)) {
+		elems.push_back(item);
+	}
+	return elems;
+}
+
+
 //页面创建成功
 void PageHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
 	CEF_REQUIRE_UI_THREAD();
@@ -82,4 +94,28 @@ void PageHandler::OnDraggableRegionsChanged(CefRefPtr<CefBrowser> browser, CefRe
 			window->SetDraggableRegions(regions);
 		}
 	}
+}
+
+bool PageHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
+{
+	CEF_REQUIRE_UI_THREAD();
+	std::string messageName = message->GetName();
+	std::vector<std::string> arr = split(messageName, '_');
+	if (arr.at(0) == "window") {
+		CefRefPtr<CefBrowserView> browserView = CefBrowserView::GetForBrowser(browser);
+		CefRefPtr<CefWindow> window = browserView->GetWindow();
+		if (arr.at(1) == "minimize") {
+			window->Minimize();
+		}
+		else if (arr.at(1) == "maximize") {
+			window->Maximize();
+		}
+		else if (arr.at(1) == "close") {
+			window->Close();
+		}
+		else if (arr.at(1) == "restore") {
+			window->Restore();
+		}
+	}
+	return true;
 }

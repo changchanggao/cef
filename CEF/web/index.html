@@ -47,14 +47,14 @@
                     background: #ffadd2;
                 }
 
-                .toolBox div:last-child:hover {
-                    background: #ff7875;
-                    color: #fff;
-                }
+        #closeBtn:hover {
+            background: #ff7875;
+            color: #fff;
+        }
 
-                .toolBox div i {
-                    font-size: 12px;
-                }
+        .toolBox div i {
+            font-size: 12px;
+        }
 
         .content {
             flex: 1;
@@ -70,6 +70,7 @@
             <div> <i class="icon icon-setting"></i> </div>
             <div id="minimizeBtn"> <i class="icon icon-minimize"></i> </div>
             <div id="maximizeBtn"> <i class="icon icon-maximize"></i> </div>
+            <div id="restoreBtn" style="display:none"> <i class="icon icon-restore"></i> </div>
             <div id="closeBtn"> <i class="icon icon-close"></i> </div>
         </div>
     </div>
@@ -78,9 +79,90 @@
         <a href="my://liulun/index.html?a=123" target="_blank">打开一个新窗口</a>
     </div>
     <script language="javascript">
+        let eventer = {
+            dic: {},
+            emit(eventName, ...obj) {
+                if (!this.dic[eventName]) {
+                    console.warn(`没有找到该事件的监听函数：${eventName}`)
+                    return;
+                }
+                this.dic[eventName].forEach((func) => func(...obj))
+            },
+            on(eventName, callBack) {
+                if (!this.dic[eventName]) this.dic[eventName] = [callBack]
+                else this.dic[eventName].push(callBack)
+            },
+            once(eventName, callBack) {
+                let callBackWrap = (...obj) => {
+                    let index = this.dic[eventName].findIndex((v) => v == callBackWrap)
+                    if (index >= 0) this.dic[eventName].splice(index, 1)
+                    callBack(...obj)
+                }
+                if (!this.dic[eventName]) this.dic[eventName] = [callBackWrap]
+                else this.dic[eventName].push(callBackWrap)
+            },
+            off(eventName, callBack) {
+                if (!this.dic[eventName] || this.dic[eventName].length < 1) return
+                if (!callBack) {
+                    delete this.dic[eventName]
+                    return
+                }
+                let index = this.dic[eventName].findIndex((v) => v == callBack)
+                if (index >= 0) this.dic[eventName].splice(index, 1)
+            }
+        }
+        let browserWindow = {
+            getMsgName(args) {
+                return `window_${args.callee.name}`
+            },
+            minimize() {
+                let msgName = this.getMsgName(arguments);
+                window.nativeCall(msgName);
+            },
+            maximize() {
+                let msgName = this.getMsgName(arguments);
+                window.nativeCall(msgName);
+            },
+            close() {
+                let msgName = this.getMsgName(arguments);
+                window.nativeCall(msgName);
+            },
+            restore() {
+                let msgName = this.getMsgName(arguments);
+                window.nativeCall(msgName);
+            },
+            isMaximized() {
+                let hSpan = window.outerHeight - screen.availHeight
+                let wSpan = window.outerWidth - screen.availWidth
+                return Math.abs(hSpan) < 2 && Math.abs(wSpan) < 2
+            },
+            maximized: false,
+            init() {
+                window.addEventListener('resize', () => {
+                    let curState = this.isMaximized()
+                    let oldState = this.maximized
+                    this.maximized = curState
+                    if (oldState && !curState) eventer.emit(`window_unMaximize`)
+                    else if (!oldState && curState) eventer.emit(`window_maximize`)
+                })
+            }
+        }
         let minimizeBtn = document.querySelector("#minimizeBtn");
-        minimizeBtn.addEventListener("click", () => {
-
+        let maximizeBtn = document.querySelector("#maximizeBtn");
+        let restoreBtn = document.querySelector("#restoreBtn");
+        let closeBtn = document.querySelector("#closeBtn");
+        minimizeBtn.addEventListener("click", () => browserWindow.minimize());
+        closeBtn.addEventListener("click", () => browserWindow.close());
+        maximizeBtn.addEventListener("click", () => browserWindow.maximize())
+        restoreBtn.addEventListener("click", () => browserWindow.restore())
+        browserWindow.init();
+        eventer.on("window_maximize", () => {
+            maximizeBtn.setAttribute("style", "display:none");
+            restoreBtn.removeAttribute("style");
+        })
+        eventer.on("window_unMaximize", () => {
+            restoreBtn.setAttribute("style", "display:none");
+            maximizeBtn.removeAttribute("style");
         })
     </script>
 </body>
