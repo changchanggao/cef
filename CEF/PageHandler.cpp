@@ -2,6 +2,7 @@
 #include "include/wrapper/cef_helpers.h"
 #include "include/views/cef_browser_view.h"
 #include "include/views/cef_window.h"
+#include <winternl.h>
 
 std::vector<std::string> split(const std::string& s, char delim) {
 	std::vector<std::string> elems;
@@ -13,6 +14,19 @@ std::vector<std::string> split(const std::string& s, char delim) {
 	return elems;
 }
 
+const std::string getOSVersion()
+{
+	NTSTATUS(WINAPI * RtlGetVersion)(LPOSVERSIONINFOEXW);
+	OSVERSIONINFOEXW osInfo;
+	std::string result;
+	*(FARPROC*)&RtlGetVersion = GetProcAddress(GetModuleHandle(L"ntdll"), "RtlGetVersion");
+	if (nullptr != RtlGetVersion) {
+		osInfo.dwOSVersionInfoSize = sizeof osInfo;
+		RtlGetVersion(&osInfo);
+		result = std::to_string(osInfo.dwMajorVersion) + "." + std::to_string(osInfo.dwMinorVersion) + "." + std::to_string(osInfo.dwBuildNumber);
+	}
+	return result;
+}
 
 //页面创建成功
 void PageHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser) {
@@ -117,5 +131,17 @@ bool PageHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefRef
 			window->Restore();
 		}
 	}
+	else if (arr.at(0) == "system") {
+		// messageName是在进入OnProcessMessageReceived方法时就通过如下代码获得了，它就是渲染进程发来的消息名
+		// std::string messageName = message->GetName();
+		CefRefPtr<CefProcessMessage> msg = CefProcessMessage::Create(messageName);
+		CefRefPtr<CefListValue> msgArgs = msg->GetArgumentList();
+		if (arr.at(1) == "getOSVersion") {
+			std::string version = getOSVersion();
+			msgArgs->SetString(0, version);
+		}
+		frame->SendProcessMessage(PID_RENDERER, msg);
+	}
+
 	return true;
 }

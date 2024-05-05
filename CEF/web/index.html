@@ -76,7 +76,12 @@
     </div>
     <div class="content">
         这是窗口的内容区域<br />
-        <a href="my://liulun/index.html?a=123" target="_blank">打开一个新窗口</a>
+        <a href="my://liulun/index.html?a=123" target="_blank">打开一个新窗口</a><br />
+        <select id="systemInfoTypeSelect">
+            <option value="getOSVersion">getOSVersion</option>
+            <option value="getOSArch">getOSArch</option>
+        </select>
+        <button id="getSystemInfoBtn">获取系统信息</button>
     </div>
     <script language="javascript">
         let eventer = {
@@ -164,6 +169,45 @@
             restoreBtn.setAttribute("style", "display:none");
             maximizeBtn.removeAttribute("style");
         })
+    </script>
+    <script language="javascript">
+        let native = {
+            randomNum(len = 12) {
+                return Math.floor(Math.pow(10, len) * Math.random())
+            },
+            call(msgName, ...params) {
+                return new Promise((resolve, reject) => {
+                    let eventName = `${msgName}_${this.randomNum()}`;
+                    eventer.once(eventName, (obj) => { resolve(obj); })
+                    window.nativeCall(eventName, ...params);
+                })
+            },
+            init() {
+                window.nativeCall(`native_registe_callback`, (msgName, ...otherParams) => {
+                    eventer.emit(msgName, ...otherParams);
+                })
+            }
+        }
+        native.init();
+        let system = {
+            getMsgName(args) {
+                return `system_${args.callee.name}`
+            },
+            async getOSVersion() {
+                let msgName = this.getMsgName(arguments);
+                let osVersion = await native.call(msgName);
+                return osVersion;
+            }
+        }
+
+        let getSystemInfoBtn = document.querySelector("#getSystemInfoBtn");
+        getSystemInfoBtn.addEventListener("click", async () => {
+            let select = document.querySelector("#systemInfoTypeSelect")
+            let val = select.selectedOptions[0].value
+            let result = await system[val]();
+            alert(result);
+        })
+
     </script>
 </body>
 </html>
